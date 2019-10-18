@@ -1,0 +1,54 @@
+admin:
+  access_log_path: "/dev/null"
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 8001
+
+static_resources:
+  listeners:
+  - address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 80
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          codec_type: auto
+          stat_prefix: ingress_http
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: backend
+              domains:
+              - "*"
+              routes:
+              - match:
+                  prefix: "/q025/"
+                route:
+                  prefix_rewrite: "/"
+                  cluster: quarkus025
+              - match:
+                  prefix: "/q022/"
+                route:
+                  prefix_rewrite: "/"
+                  cluster: quarkus022
+
+          http_filters:
+          - name: envoy.router
+
+  clusters:
+  - name: quarkus025
+    connect_timeout: 0.5s
+    type: LOGICAL_DNS
+    dns_lookup_family: V4_ONLY
+    lb_policy: ROUND_ROBIN
+    hosts: [{ socket_address: { address: quarkus025, port_value: 8080 }}]
+
+  - name: quarkus022
+    connect_timeout: 0.5s
+    type: LOGICAL_DNS
+    dns_lookup_family: V4_ONLY
+    lb_policy: ROUND_ROBIN
+    hosts: [{ socket_address: { address: quarkus022, port_value: 8080 }}]

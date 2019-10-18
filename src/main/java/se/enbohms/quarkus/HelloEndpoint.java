@@ -15,7 +15,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 @Tag(name = "quarkus", description = "Some OpenAPI description")
 public class HelloEndpoint {
 
-
   @GET
   @Operation(summary = "Say hi", description = "An OpenAPI description of saying hi")
   @APIResponses(value = {@APIResponse(responseCode = "200")})

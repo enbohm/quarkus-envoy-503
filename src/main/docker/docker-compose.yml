@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  q025:
+    image: enbohm/quarkus025
+    networks:
+      envoymesh:
+        aliases:
+          - quarkus025
+   
+  q022:
+    image: enbohm/quarkus022
+    networks:
+      envoymesh:
+        aliases:
+          - quarkus022
+  envoy:
+    build:
+      context: .
+      dockerfile: Dockerfile-frontenvoy
+    networks:
+      - envoymesh
+    volumes:
+      - ./envoy.yml:/etc/front-envoy.yaml
+    ports:
+      - "8080:80"
+      - "8001:8001"
+networks:
+  envoymesh: {}
